@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartQueue Pro | Intelligent Queue Management System</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- App Container -->
+  <div id="app" class="app-container">
+    
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="brand-logo">
+          <div class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">SmartQueue<span class="accent-dot">.</span></span>
+            <span class="system-status"><span class="status-pulse"></span>Live Local Sync</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- View Navigation Tabs -->
+      <nav class="view-nav" aria-label="System Views">
+        <button class="nav-tab active" data-view="kiosk">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+          <span>Customer Kiosk</span>
+        </button>
+        <button class="nav-tab" data-view="staff">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>Staff Dashboard</span>
+        </button>
+        <button class="nav-tab" data-view="display">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+          <span>Public Display</span>
+        </button>
+      </nav>
+
+      <!-- Global Controls & Clock -->
+      <div class="header-right">
+        <div class="audio-toggle-wrapper">
+          <button id="soundToggleBtn" class="icon-btn" title="Toggle Audio Announcements">
+            <svg id="soundOnIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <svg id="soundOffIcon" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+          </button>
+        </div>
+        <div class="live-clock" id="liveClock">00:00:00 AM</div>
+        <button id="demoDataBtn" class="pill-btn secondary" title="Reset and populate sample tickets">Seed Demo</button>
+      </div>
+    </header>
+
+    <!-- MAIN VIEWS WRAPPER -->
+    <main class="main-content">
+      
+      <!-- ============================================== -->
+      <!-- VIEW 1: CLIENT / CUSTOMER KIOSK VIEW           -->
+      <!-- ============================================== -->
+      <section id="kioskView" class="view-panel active">
+        <div class="kiosk-grid">
+          
+          <!-- Left Column: Check-in & Form -->
+          <div class="kiosk-form-card">
+            <div class="card-hero">
+              <span class="badge badge-accent">Self-Service Check-In</span>
+              <h2>Welcome! Join the Queue</h2>
+              <p>Please enter your details and choose the service you need today. You will receive an instant digital ticket.</p>
+            </div>
+
+            <form id="joinQueueForm" class="queue-form">
+              <div class="form-group">
+                <label for="custName">Customer Full Name <span class="required">*</span></label>
+                <div class="input-with-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <input type="text" id="custName" placeholder="e.g. Alex Morgan" required autocomplete="off" maxlength="40">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="custPhone">Phone or Email <span class="label-hint">(Optional for SMS alerts)</span></label>
+                <div class="input-with-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <input type="text" id="custPhone" placeholder="e.g. +1 (555) 019-2834" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Select Service Category <span class="required">*</span></label>
+                <div class="service-selector" role="radiogroup">
+                  <label class="service-option selected" data-service="general">
+                    <input type="radio" name="serviceCategory" value="general" checked>
+                    <div class="service-icon-box general">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </div>
+                    <div class="service-info">
+                      <span class="service-title">General Inquiry</span>
+                      <span class="service-meta">~5 mins avg service</span>
+                    </div>
+                    <div class="service-prefix">Code: G</div>
+                  </label>
+
+                  <label class="service-option" data-service="billing">
+                    <input type="radio" name="serviceCategory" value="billing">
+                    <div class="service-icon-box billing">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                    </div>
+                    <div class="service-info">
+                      <span class="service-title">Billing & Accounts</span>
+                      <span class="service-meta">~8 mins avg service</span>
+                    </div>
+                    <div class="service-prefix">Code: B</div>
+                  </label>
+
+                  <label class="service-option" data-service="tech">
+                    <input type="radio" name="serviceCategory" value="tech">
+                    <div class="service-icon-box tech">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                    </div>
+                    <div class="service-info">
+                      <span class="service-title">Technical Support</span>
+                      <span class="service-meta">~12 mins avg service</span>
+                    </div>
+                    <div class="service-prefix">Code: T</div>
+                  </label>
+
+                  <label class="service-option" data-service="vip">
+                    <input type="radio" name="serviceCategory" value="vip">
+                    <div class="service-icon-box vip">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <div class="service-info">
+                      <span class="service-title">Priority / Express</span>
+                      <span class="service-meta">~4 mins avg service</span>
+                    </div>
+                    <div class="service-prefix">Code: P</div>
+                  </label>
+                </div>
+              </div>
+
+              <button type="submit" class="submit-ticket-btn" id="generateTicketBtn">
+                <span>Issue My Digital Ticket</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </form>
+          </div>
+
+          <!-- Right Column: Digital Ticket Pass & Status -->
+          <div class="kiosk-status-card">
+            
+            <!-- When customer already has an active ticket -->
+            <div id="activeTicketDisplay" class="ticket-slip-wrapper hidden">
+              <div class="ticket-slip" id="printableTicket">
+                <div class="slip-header">
+                  <div class="slip-brand">SMARTQUEUE PASS</div>
+                  <div class="slip-dot-cutout left"></div>
+                  <div class="slip-dot-cutout right"></div>
+                  <span id="ticketStatusBadge" class="badge badge-waiting">In Queue</span>
+                </div>
+
+                <div class="slip-body">
+                  <span class="slip-caption">YOUR NUMBER</span>
+                  <div class="ticket-big-number" id="ticketNumberDisplay">A-000</div>
+                  <div class="ticket-customer-name" id="ticketNameDisplay">Customer Name</div>
+                  <div class="ticket-service-tag" id="ticketServiceDisplay">General Inquiry</div>
+
+                  <div class="ticket-details-grid">
+                    <div class="detail-item">
+                      <span class="detail-label">Position in Line</span>
+                      <span class="detail-val highlight" id="ticketPositionDisplay">#1</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Estimated Wait</span>
+                      <span class="detail-val" id="ticketWaitDisplay">~5 mins</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Assigned Counter</span>
+                      <span class="detail-val" id="ticketCounterDisplay">Waiting...</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Issued At</span>
+                      <span class="detail-val" id="ticketTimeDisplay">--:--</span>
+                    </div>
+                  </div>
+
+                  <div class="barcode-container">
+                    <div class="simulated-barcode"></div>
+                    <span class="barcode-code" id="ticketBarcodeCode">SQ-000000</span>
+                  </div>
+                </div>
+
+                <div class="slip-footer">
+                  <p>Please keep this screen open or print your slip. You will hear an audio announcement when called.</p>
+                </div>
+              </div>
+
+              <!-- Ticket Action Buttons -->
+              <div class="ticket-actions no-print">
+                <button id="printTicketBtn" class="pill-btn primary">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                  Print Ticket
+                </button>
+                <button id="cancelTicketBtn" class="pill-btn danger">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  Leave Queue
+                </button>
+                <button id="newTicketBtn" class="pill-btn secondary">Take Another Ticket</button>
+              </div>
+            </div>
+
+            <!-- Placeholder when no ticket has been issued yet -->
+            <div id="noTicketPlaceholder" class="empty-kiosk-placeholder">
+              <div class="placeholder-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </div>
+              <h3>No Active Ticket</h3>
+              <p>Fill out the check-in form to the left to get your queue number and monitor your turn in real time.</p>
+              
+              <!-- Mini Live Queue Board on Kiosk -->
+              <div class="kiosk-live-preview">
+                <div class="preview-header">
+                  <span>Currently Serving Across Counters</span>
+                  <span class="live-tag"><span class="dot"></span> Live</span>
+                </div>
+                <div class="mini-serving-list" id="kioskMiniServing">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 2: ADMIN / STAFF DASHBOARD VIEW           -->
+      <!-- ============================================== -->
+      <section id="staffView" class="view-panel">
+        
+        <!-- Statistics Widgets Bar -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper blue">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-title">Currently Waiting</span>
+              <div class="stat-value" id="statWaitingCount">0</div>
+              <span class="stat-footer text-muted" id="statWaitingSubtitle">In line</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper emerald">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-title">Total Served Today</span>
+              <div class="stat-value" id="statServedCount">0</div>
+              <span class="stat-footer text-success" id="statServedSubtitle">+0% completed</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper amber">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-title">Avg. Wait Time</span>
+              <div class="stat-value" id="statAvgWait">4.2 <span class="unit">min</span></div>
+              <span class="stat-footer text-muted">Estimated today</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper purple">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-title">Active Counters</span>
+              <div class="stat-value" id="statActiveCounters">3 <span class="unit">desks</span></div>
+              <span class="stat-footer text-info">Ready to serve</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Staff Main Interactive Area -->
+        <div class="staff-workspace">
+          
+          <!-- Column 1: Desk Operator Panel -->
+          <div class="desk-panel card">
+            <div class="desk-header">
+              <div class="counter-selector-wrap">
+                <label for="counterSelect">Operate Counter:</label>
+                <select id="counterSelect" class="styled-select">
+                  <option value="1">Counter 1 - General Inquiries</option>
+                  <option value="2">Counter 2 - Billing & Payments</option>
+                  <option value="3">Counter 3 - Technical Support</option>
+                  <option value="4">Counter 4 - Express Desk</option>
+                </select>
+              </div>
+              <div class="staff-badge">
+                <span class="staff-avatar">ST</span>
+                <span>Staff Active</span>
+              </div>
+            </div>
+
+            <!-- Active Ticket Spotlight -->
+            <div class="current-serving-box" id="currentServingBox">
+              <div class="serving-header">
+                <span class="eyebrow-text">CURRENTLY SERVING AT THIS COUNTER</span>
+                <span id="serviceTimer" class="timer-pill">00:00</span>
+              </div>
+
+              <div id="servingActiveContent" class="serving-details">
+                <div class="serving-number-badge" id="servingNumber">---</div>
+                <h3 class="serving-customer" id="servingName">No customer called</h3>
+                <div class="serving-tags">
+                  <span class="tag tag-service" id="servingService">Awaiting Next Call</span>
+                  <span class="tag tag-time" id="servingWaitDuration">Wait: --</span>
+                </div>
+              </div>
+
+              <!-- Action Controls Bar -->
+              <div class="staff-controls-grid">
+                <button id="callNextBtn" class="control-btn btn-call-next">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span>Call Next</span>
+                </button>
+                <button id="recallBtn" class="control-btn btn-recall" disabled>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                  <span>Recall</span>
+                </button>
+                <button id="completeBtn" class="control-btn btn-complete" disabled>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Complete</span>
+                </button>
+                <button id="skipBtn" class="control-btn btn-skip" disabled>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                  <span>No-Show / Skip</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- All Counters Live Status Bar -->
+            <div class="all-counters-status">
+              <h4>All Counters Activity</h4>
+              <div class="counters-cards-grid" id="allCountersList">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Live Queue Management -->
+          <div class="queue-panel card">
+            <div class="queue-panel-header">
+              <div class="queue-title-wrap">
+                <h3>Live Waiting Queue</h3>
+                <span class="counter-bubble" id="queueTotalBadge">0</span>
+              </div>
+
+              <!-- Filter tabs -->
+              <div class="queue-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="general">General</button>
+                <button class="filter-btn" data-filter="billing">Billing</button>
+                <button class="filter-btn" data-filter="tech">Tech</button>
+                <button class="filter-btn" data-filter="vip">Priority</button>
+              </div>
+            </div>
+
+            <!-- Waiting Queue List -->
+            <div class="queue-table-container">
+              <div class="queue-items-list" id="queueItemsList">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+
+            <!-- Recent Activity Audit List -->
+            <div class="history-section">
+              <div class="history-header">
+                <h4>Recently Processed (Completed / Skipped)</h4>
+                <button id="clearHistoryBtn" class="text-link-btn">Clear Log</button>
+              </div>
+              <div class="history-list" id="historyItemsList">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 3: PUBLIC LIVE STATUS BOARD               -->
+      <!-- ============================================== -->
+      <section id="displayView" class="view-panel">
+        <div class="display-board-container">
+          <div class="display-board-header">
+            <div class="board-brand">
+              <div class="live-dot-beacon"></div>
+              <h1>MAIN TERMINAL QUEUE DISPLAY</h1>
+            </div>
+            <div class="board-clock" id="displayClock">00:00:00</div>
+          </div>
+
+          <div class="display-board-grid">
+            <!-- Left Large Showcase: Now Serving Counters -->
+            <div class="display-serving-section">
+              <div class="section-title-bar">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span>NOW SERVING</span>
+              </div>
+              
+              <div class="display-counters-cards" id="displayCountersGrid">
+                <!-- Counter screens populated by JS -->
+              </div>
+            </div>
+
+            <!-- Right Column: Up Next Queue Board -->
+            <div class="display-upnext-section">
+              <div class="section-title-bar">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>UP NEXT IN LINE</span>
+              </div>
+              
+              <div class="upnext-list" id="displayUpNextList">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Scrolling Ticker Bottom Bar -->
+          <footer class="display-ticker">
+            <div class="ticker-badge">ANNOUNCEMENT</div>
+            <div class="ticker-content">
+              <span class="ticker-text">Please proceed directly to your assigned counter when your number flashes. Prepare any relevant documents or account numbers. Thank you for your cooperation!</span>
+            </div>
+          </footer>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Toast Alerts Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
+
